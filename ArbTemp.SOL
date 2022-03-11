@@ -1,13 +1,13 @@
 # ArbitrageTemplate
-A template for BNB/MATIC/AAVE Flash Loans
-Step 1) Open remix.ethereum.org and create a new file labeled "MaticArbitrage.SOL" (Sol is for Solidity, the coding language used)
-Step 2) copy everything below "VVVVVVV" line and paste into Newly created file on remix. 
-Step 3) Match Compiler (0.5.0) and Compile!
-Step 4) Sync Polygon Mainnet via Metamask (note, this is Polgyon Mainnet, not Ethereum Mainnet)
-Step 5) Create token (this will become tokenName = tokenName, Symbol, etc...). This is not a listed token, so name doesn't matter. Create any combination. Set initial value at 5000-15000. I've found any more or less isn't as effective, but everything between seems consistent. 
-Step 6) Click "Transact" and your metamask should pop up to verify a small gas fee and create your coin (and address)
-Step 7) Copy the coin address you created, open metamask from your browser, and send to your newly created address. Once the transaction completes, it will list in your remix console. You are providing liquidity for your own token by doing this. Bots register this and we take advantage of that!!!!
-Step 8) Click Drop Down and Select Flash loan. This begins the arbitrage cycle noted step by step at the bottom of this page. 
+//A template for BNB/MATIC/AAVE Flash Loans
+//Step 1) Open remix.ethereum.org and create a new file labeled "MaticArbitrage.SOL" (Sol is for Solidity, the coding language used)
+//Step 2) copy everything below "VVVVVVV" line and paste into Newly created file on remix. 
+//Step 3) Match Compiler (0.5.0) and Compile!
+//Step 4) Sync Polygon Mainnet via Metamask (note, this is Polgyon Mainnet, not Ethereum Mainnet)
+//Step 5) Create token (this will become tokenName = tokenName, Symbol, etc...). This is not a listed token, so name doesn't matter. Create any combination. Set initial value at 5000-15000. I've found any more or less isn't as effective, but everything between seems consistent. 
+//Step 6) Click "Transact" and your metamask should pop up to verify a small gas fee and create your coin (and address)
+//Step 7) Copy the coin address you created, open metamask from your browser, and send to your newly created address. Once the transaction completes, it will list in your remix console. You are providing liquidity for your own token by doing this. Bots register this and we take advantage of that!!!!
+//Step 8) Click Drop Down and Select Flash loan. This begins the arbitrage cycle noted step by step at the bottom of this page. 
  
 VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
  
